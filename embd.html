@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ujwal Weather Station</title>
+    <style>
+        /* Base styles */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        /* Dashboard frame */
+        .dashboard {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 350px;
+        }
+
+        h1 {
+            color: #333333;
+            margin-bottom: 25px;
+            font-size: 24px;
+        }
+
+        /* Weather display layouts */
+        .measurement {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            background-color: #f8f9fa;
+        }
+
+        .label {
+            font-size: 18px;
+            color: #555555;
+            font-weight: bold;
+        }
+
+        .value {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        /* Distinct colors for output metrics */
+        #temp-value {
+            color: #ff5722; /* Warm red/orange */
+        }
+
+        #humidity-value {
+            color: #00bcd4; /* Cool blue */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="dashboard">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; font-size: 13px;">
+            <a href="index.html" style="color: #007bff; text-decoration: none; font-weight: bold;">🏠 Home</a>
+            <a href="Embedded.html" style="color: #007bff; text-decoration: none; font-weight: bold;">Embedded Hub</a>
+            <a href="Login.html" style="color: #007bff; text-decoration: none; font-weight: bold;">Login →</a>
+        </div>
+        <h1>Ujwal Weather Data</h1>
+        
+        <!-- Temperature Card -->
+        <div class="measurement">
+            <span class="label">🌡️ Temperature:</span>
+            <span id="temp-value" class="value">--°C</span>
+        </div>
+
+        <!-- Humidity Card -->
+        <div class="measurement">
+            <span class="label">💧 Humidity:</span>
+            <span id="humidity-value" class="value">--%</span>
+        </div>
+    </div>
+
+    <script>
+        // Function to simulate real-time sensor updates
+        function updateSensorData() {
+            // Generate realistic random variables 
+            const mockTemperature = (Math.random() * (30 - 20) + 20).toFixed(1); 
+            const mockHumidity = Math.floor(Math.random() * (70 - 40) + 40);
+
+            // Output the data dynamically to the HTML placeholders
+            document.getElementById('temp-value').innerText = `${mockTemperature}°C`;
+            document.getElementById('humidity-value').innerText = `${mockHumidity}%`;
+        }
+
+        // Run the function immediately on page load
+        updateSensorData();
+
+        // Automatically update the output every 3 seconds
+        setInterval(updateSensorData, 3000);
+    </script>
+
+</body>
+</html>

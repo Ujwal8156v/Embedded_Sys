@@ -1,0 +1,1198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Embedded Systems & IoT Real-Time Control & Telemetry Dashboard">
+    <title>Embedded - IoT & Microcontroller Dashboard</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --bg-dark: #080c14;
+            --bg-card: rgba(16, 24, 40, 0.75);
+            --bg-card-hover: rgba(24, 36, 60, 0.85);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --border-glow: rgba(0, 242, 254, 0.3);
+            
+            --accent-cyan: #00f2fe;
+            --accent-emerald: #00f5a0;
+            --accent-amber: #ffb703;
+            --accent-rose: #ff4757;
+            --accent-purple: #7d5fff;
+            
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --text-dim: #64748b;
+            
+            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            --neon-glow: 0 0 15px rgba(0, 242, 254, 0.4);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            background-image: 
+                radial-gradient(circle at 15% 20%, rgba(0, 242, 254, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 85% 80%, rgba(125, 95, 255, 0.08) 0%, transparent 40%),
+                linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 100%, 30px 30px, 30px 30px;
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- Header Navigation --- */
+        header {
+            background: rgba(8, 12, 20, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            padding: 12px 28px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .brand-logo {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #000;
+            font-size: 20px;
+            box-shadow: var(--neon-glow);
+        }
+
+        .brand-text h1 {
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            background: linear-gradient(90deg, #ffffff, var(--accent-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .brand-text span {
+            font-size: 11px;
+            color: var(--accent-emerald);
+            font-family: 'Fira Code', monospace;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .status-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(0, 245, 160, 0.1);
+            border: 1px solid rgba(0, 245, 160, 0.3);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            color: var(--accent-emerald);
+            font-weight: 500;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--accent-emerald);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--accent-emerald);
+            animation: pulse 1.8s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.95); opacity: 0.8; }
+            50% { transform: scale(1.2); opacity: 1; box-shadow: 0 0 12px var(--accent-emerald); }
+            100% { transform: scale(0.95); opacity: 0.8; }
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 12px;
+        }
+
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 8px 16px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-btn:hover {
+            background: rgba(0, 242, 254, 0.15);
+            border-color: var(--accent-cyan);
+            color: #fff;
+            transform: translateY(-1px);
+        }
+
+        /* --- Main Layout --- */
+        main {
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 28px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            flex: 1;
+        }
+
+        /* Top Info Banner */
+        .system-banner {
+            background: var(--bg-card);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 20px 24px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            box-shadow: var(--glass-shadow);
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .info-label {
+            font-size: 12px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .info-val {
+            font-size: 16px;
+            font-weight: 600;
+            font-family: 'Fira Code', monospace;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Metrics Grid */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 20px;
+        }
+
+        .metric-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: var(--glass-shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--card-accent, var(--accent-cyan)), transparent);
+        }
+
+        .metric-card:hover {
+            border-color: var(--border-glow);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5), var(--neon-glow);
+        }
+
+        .metric-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .metric-title {
+            font-size: 14px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .metric-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: var(--card-accent, var(--accent-cyan));
+        }
+
+        .metric-body {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            margin-top: 8px;
+        }
+
+        .metric-value {
+            font-size: 32px;
+            font-weight: 700;
+            font-family: 'Fira Code', monospace;
+            letter-spacing: -0.5px;
+            color: var(--text-main);
+        }
+
+        .metric-unit {
+            font-size: 16px;
+            color: var(--text-muted);
+            font-weight: 400;
+            margin-left: 4px;
+        }
+
+        .metric-change {
+            font-size: 12px;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .change-up {
+            background: rgba(0, 245, 160, 0.15);
+            color: var(--accent-emerald);
+        }
+
+        .change-down {
+            background: rgba(255, 71, 87, 0.15);
+            color: var(--accent-rose);
+        }
+
+        /* Two-Column Workspace */
+        .dashboard-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 1024px) {
+            .dashboard-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: var(--bg-card);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: var(--glass-shadow);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-title i {
+            color: var(--accent-cyan);
+        }
+
+        /* Chart Canvas */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            height: 280px;
+        }
+
+        canvas {
+            width: 100% !important;
+            height: 100% !important;
+        }
+
+        /* Controls Section */
+        .controls-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .control-box {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .control-box:hover {
+            border-color: rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .control-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .control-name {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .control-sub {
+            font-size: 11px;
+            color: var(--text-dim);
+            font-family: 'Fira Code', monospace;
+        }
+
+        /* Custom Toggle Switch */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 46px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: rgba(255, 255, 255, 0.1);
+            transition: .3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 24px;
+            border: 1px solid var(--border-color);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 2px;
+            bottom: 2px;
+            background-color: var(--text-muted);
+            transition: .3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: rgba(0, 242, 254, 0.25);
+            border-color: var(--accent-cyan);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(22px);
+            background-color: var(--accent-cyan);
+            box-shadow: 0 0 10px var(--accent-cyan);
+        }
+
+        /* Range Slider */
+        .range-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .range-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            background: transparent;
+        }
+
+        input[type=range]:focus {
+            outline: none;
+        }
+
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 6px;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+        }
+
+        input[type=range]::-webkit-slider-thumb {
+            height: 18px;
+            width: 18px;
+            border-radius: 50%;
+            background: var(--accent-cyan);
+            cursor: pointer;
+            -webkit-appearance: none;
+            margin-top: -6px;
+            box-shadow: 0 0 10px var(--accent-cyan);
+        }
+
+        /* GPIO Pinout Table */
+        .pin-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            font-family: 'Fira Code', monospace;
+        }
+
+        .pin-table th {
+            text-align: left;
+            padding: 10px 12px;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border-color);
+            font-weight: 500;
+            font-size: 11px;
+            text-transform: uppercase;
+        }
+
+        .pin-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .pin-tag {
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .pin-input {
+            background: rgba(125, 95, 255, 0.15);
+            color: var(--accent-purple);
+        }
+
+        .pin-output {
+            background: rgba(0, 242, 254, 0.15);
+            color: var(--accent-cyan);
+        }
+
+        .pin-state-high {
+            color: var(--accent-emerald);
+            font-weight: 600;
+        }
+
+        .pin-state-low {
+            color: var(--text-dim);
+        }
+
+        /* Terminal Console */
+        .terminal-card {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .terminal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 12px;
+        }
+
+        .terminal-window {
+            background: #04060a;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 14px;
+            height: 220px;
+            overflow-y: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 12px;
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .log-entry {
+            display: flex;
+            gap: 12px;
+        }
+
+        .log-time {
+            color: var(--text-dim);
+            user-select: none;
+        }
+
+        .log-type {
+            font-weight: 600;
+        }
+
+        .log-info { color: var(--accent-cyan); }
+        .log-success { color: var(--accent-emerald); }
+        .log-warn { color: var(--accent-amber); }
+        .log-error { color: var(--accent-rose); }
+
+        .terminal-input-bar {
+            display: flex;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .terminal-input-bar input {
+            flex: 1;
+            background: #04060a;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 8px 14px;
+            color: var(--text-main);
+            font-family: 'Fira Code', monospace;
+            font-size: 13px;
+        }
+
+        .terminal-input-bar input:focus {
+            outline: none;
+            border-color: var(--accent-cyan);
+        }
+
+        .send-btn {
+            background: var(--accent-cyan);
+            color: #000;
+            border: none;
+            padding: 8px 18px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .send-btn:hover {
+            box-shadow: var(--neon-glow);
+            transform: translateY(-1px);
+        }
+
+        /* Footer */
+        footer {
+            border-top: 1px solid var(--border-color);
+            padding: 20px 28px;
+            text-align: center;
+            font-size: 13px;
+            color: var(--text-dim);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(8, 12, 20, 0.9);
+        }
+
+        footer a {
+            color: var(--accent-cyan);
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <a href="index.html" class="brand">
+            <div class="brand-logo">
+                <i class="fa-solid fa-microchip"></i>
+            </div>
+            <div class="brand-text">
+                <h1>EMBEDDED</h1>
+                <span>IoT Telemetry & Control</span>
+            </div>
+        </a>
+
+        <div class="header-actions">
+            <div class="status-badge">
+                <div class="status-dot"></div>
+                <span id="gateway-status">ESP32 Online (WiFi)</span>
+            </div>
+
+            <div class="nav-links">
+                <a href="index.html" class="nav-btn">
+                    <i class="fa-solid fa-house"></i> Domain Home
+                </a>
+                <a href="embd.html" class="nav-btn">
+                    <i class="fa-solid fa-cloud-sun"></i> Weather Station
+                </a>
+                <a href="Login.html" class="nav-btn">
+                    <i class="fa-solid fa-right-to-bracket"></i> Login
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+
+        <!-- System Overview Banner -->
+        <div class="system-banner">
+            <div class="info-item">
+                <span class="info-label">Microcontroller</span>
+                <span class="info-val"><i class="fa-solid fa-cpu" style="color: var(--accent-cyan);"></i> ESP32-WROOM-32</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Firmware Build</span>
+                <span class="info-val">v2.4.1-BLE-MQTT</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">System Uptime</span>
+                <span class="info-val" id="uptime-counter">04d 12h 35m 18s</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Free Heap Memory</span>
+                <span class="info-val" id="heap-memory">184.2 KB</span>
+            </div>
+        </div>
+
+        <!-- Telemetry Cards -->
+        <div class="metrics-grid">
+
+            <!-- Temperature Card -->
+            <div class="metric-card" style="--card-accent: #ff4757;">
+                <div class="metric-header">
+                    <span class="metric-title">Core Temperature</span>
+                    <div class="metric-icon"><i class="fa-solid fa-temperature-high"></i></div>
+                </div>
+                <div class="metric-body">
+                    <div>
+                        <span class="metric-value" id="temp-val">26.4</span>
+                        <span class="metric-unit">°C</span>
+                    </div>
+                    <div class="metric-change change-up">
+                        <i class="fa-solid fa-arrow-up"></i> +0.3°
+                    </div>
+                </div>
+            </div>
+
+            <!-- Humidity Card -->
+            <div class="metric-card" style="--card-accent: #00f2fe;">
+                <div class="metric-header">
+                    <span class="metric-title">Relative Humidity</span>
+                    <div class="metric-icon"><i class="fa-solid fa-droplet"></i></div>
+                </div>
+                <div class="metric-body">
+                    <div>
+                        <span class="metric-value" id="humidity-val">58</span>
+                        <span class="metric-unit">%</span>
+                    </div>
+                    <div class="metric-change change-down">
+                        <i class="fa-solid fa-arrow-down"></i> -1.2%
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bus Voltage -->
+            <div class="metric-card" style="--card-accent: #ffb703;">
+                <div class="metric-header">
+                    <span class="metric-title">VCC Bus Voltage</span>
+                    <div class="metric-icon"><i class="fa-solid fa-bolt"></i></div>
+                </div>
+                <div class="metric-body">
+                    <div>
+                        <span class="metric-value" id="voltage-val">3.32</span>
+                        <span class="metric-unit">V</span>
+                    </div>
+                    <div class="metric-change change-up">
+                        <i class="fa-solid fa-check"></i> Stable
+                    </div>
+                </div>
+            </div>
+
+            <!-- RSSI Signal -->
+            <div class="metric-card" style="--card-accent: #00f5a0;">
+                <div class="metric-header">
+                    <span class="metric-title">WiFi Signal (RSSI)</span>
+                    <div class="metric-icon"><i class="fa-solid fa-wifi"></i></div>
+                </div>
+                <div class="metric-body">
+                    <div>
+                        <span class="metric-value" id="rssi-val">-58</span>
+                        <span class="metric-unit">dBm</span>
+                    </div>
+                    <div class="metric-change change-up">
+                        <i class="fa-solid fa-signal"></i> Excellent
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Dashboard Main Section: Chart + Actuator Controls -->
+        <div class="dashboard-row">
+            
+            <!-- Live Real-Time Sensor Stream Chart -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <i class="fa-solid fa-chart-line"></i> Real-Time Sensor Stream (ADC & DHT)
+                    </div>
+                    <div style="display: flex; gap: 8px;">
+                        <button id="pause-chart-btn" class="nav-btn" style="padding: 4px 10px; font-size: 11px;">
+                            <i class="fa-solid fa-pause"></i> Pause
+                        </button>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="telemetryChart"></canvas>
+                </div>
+            </div>
+
+            <!-- GPIO & Actuator Controllers -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <i class="fa-solid fa-sliders"></i> Actuator & Relay Controls
+                    </div>
+                </div>
+                <div class="controls-grid">
+
+                    <!-- Relay 1 -->
+                    <div class="control-box">
+                        <div class="control-top">
+                            <div>
+                                <div class="control-name">Relay 1 (Load)</div>
+                                <div class="control-sub">GPIO 26</div>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="relay1-toggle" checked onchange="toggleRelay('Relay 1', this.checked)">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- LED Switch -->
+                    <div class="control-box">
+                        <div class="control-top">
+                            <div>
+                                <div class="control-name">Status LED</div>
+                                <div class="control-sub">GPIO 2</div>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="led-toggle" checked onchange="toggleRelay('Status LED', this.checked)">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- PWM Dimmer -->
+                    <div class="control-box" style="grid-column: span 1;">
+                        <div class="range-wrapper">
+                            <div class="range-header">
+                                <span>PWM Output (Duty Cycle)</span>
+                                <span id="pwm-val" style="font-family: 'Fira Code', monospace; color: var(--accent-cyan);">180 / 255</span>
+                            </div>
+                            <input type="range" min="0" max="255" value="180" id="pwm-slider" oninput="updatePWM(this.value)">
+                        </div>
+                    </div>
+
+                    <!-- Servo Angle -->
+                    <div class="control-box">
+                        <div class="range-wrapper">
+                            <div class="range-header">
+                                <span>Servo Position</span>
+                                <span id="servo-val" style="font-family: 'Fira Code', monospace; color: var(--accent-emerald);">90°</span>
+                            </div>
+                            <input type="range" min="0" max="180" value="90" id="servo-slider" oninput="updateServo(this.value)">
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Lower Section: GPIO Pin Monitor & Serial Terminal -->
+        <div class="dashboard-row">
+            
+            <!-- GPIO Pin Monitor -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <i class="fa-solid fa-table-cells"></i> GPIO Pin Status Register
+                    </div>
+                </div>
+                <table class="pin-table">
+                    <thead>
+                        <tr>
+                            <th>Pin #</th>
+                            <th>Function</th>
+                            <th>Direction</th>
+                            <th>State / Voltage</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>GPIO 02</td>
+                            <td>Status LED</td>
+                            <td><span class="pin-tag pin-output">OUTPUT</span></td>
+                            <td class="pin-state-high"><i class="fa-solid fa-circle" style="font-size: 8px;"></i> HIGH (3.3V)</td>
+                        </tr>
+                        <tr>
+                            <td>GPIO 04</td>
+                            <td>DHT22 Sensor Data</td>
+                            <td><span class="pin-tag pin-input">INPUT_PULLUP</span></td>
+                            <td class="pin-state-high"><i class="fa-solid fa-circle" style="font-size: 8px;"></i> HIGH (3.3V)</td>
+                        </tr>
+                        <tr>
+                            <td>GPIO 26</td>
+                            <td>Relay Output 1</td>
+                            <td><span class="pin-tag pin-output">OUTPUT</span></td>
+                            <td class="pin-state-high" id="pin26-state"><i class="fa-solid fa-circle" style="font-size: 8px;"></i> HIGH (3.3V)</td>
+                        </tr>
+                        <tr>
+                            <td>GPIO 34</td>
+                            <td>Analog Read (ADC1_CH6)</td>
+                            <td><span class="pin-tag pin-input">ANALOG</span></td>
+                            <td style="color: var(--accent-amber);" id="pin34-adc">ADC: 2145 (1.72V)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Serial Terminal Console -->
+            <div class="card terminal-card">
+                <div class="terminal-header">
+                    <div class="card-title">
+                        <i class="fa-solid fa-terminal"></i> UART Serial Log (115200 Baud)
+                    </div>
+                    <button class="nav-btn" onclick="clearTerminal()" style="padding: 4px 10px; font-size: 11px;">
+                        <i class="fa-solid fa-trash"></i> Clear
+                    </button>
+                </div>
+                
+                <div class="terminal-window" id="terminal-output">
+                    <div class="log-entry">
+                        <span class="log-time">[00:00:01]</span>
+                        <span class="log-type log-info">[SYSTEM]</span>
+                        <span>Booting ESP-IDF v4.4-dev...</span>
+                    </div>
+                    <div class="log-entry">
+                        <span class="log-time">[00:00:02]</span>
+                        <span class="log-type log-success">[WIFI]</span>
+                        <span>Connected to AP 'Embedded_Net' IP: 192.168.1.104</span>
+                    </div>
+                    <div class="log-entry">
+                        <span class="log-time">[00:00:03]</span>
+                        <span class="log-type log-info">[MQTT]</span>
+                        <span>Connected to broker mqtt.embedded-hub.internal:1883</span>
+                    </div>
+                </div>
+
+                <form onsubmit="sendTerminalCmd(event)" class="terminal-input-bar">
+                    <input type="text" id="cmd-input" placeholder="Type command (e.g. status, reboot, gpio 2 1)..." autocomplete="off">
+                    <button type="submit" class="send-btn"><i class="fa-solid fa-paper-plane"></i> Send</button>
+                </form>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div>
+            <strong>Embedded Control Portal</strong> &copy; 2026 Ujwal. All rights reserved.
+        </div>
+        <div>
+            <a href="embd.html">Weather Station</a> &bull; 
+            <a href="Login.html">Login Page</a>
+        </div>
+    </footer>
+
+    <!-- JavaScript logic -->
+    <script>
+        // Real-time Canvas Telemetry Chart Implementation
+        const canvas = document.getElementById('telemetryChart');
+        const ctx = canvas.getContext('2d');
+        
+        let chartData = Array(30).fill(25);
+        let humidityData = Array(30).fill(55);
+        let isPaused = false;
+
+        function resizeCanvas() {
+            canvas.width = canvas.parentElement.clientWidth;
+            canvas.height = canvas.parentElement.clientHeight;
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        function drawChart() {
+            const width = canvas.width;
+            const height = canvas.height;
+            const padding = 30;
+
+            ctx.clearRect(0, 0, width, height);
+
+            // Draw Background Grid
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+            ctx.lineWidth = 1;
+
+            for (let x = padding; x < width - padding; x += 40) {
+                ctx.beginPath();
+                ctx.moveTo(x, padding);
+                ctx.lineTo(x, height - padding);
+                ctx.stroke();
+            }
+
+            for (let y = padding; y < height - padding; y += 30) {
+                ctx.beginPath();
+                ctx.moveTo(padding, y);
+                ctx.lineTo(width - padding, y);
+                ctx.stroke();
+            }
+
+            // Helper to map values
+            const getX = (index) => padding + (index / (chartData.length - 1)) * (width - 2 * padding);
+            const getYTemp = (val) => height - padding - ((val - 15) / 25) * (height - 2 * padding);
+            const getYHum = (val) => height - padding - ((val - 30) / 60) * (height - 2 * padding);
+
+            // Draw Temperature Line (Red/Orange gradient)
+            const tempGradient = ctx.createLinearGradient(0, 0, 0, height);
+            tempGradient.addColorStop(0, 'rgba(255, 71, 87, 0.4)');
+            tempGradient.addColorStop(1, 'rgba(255, 71, 87, 0.0)');
+
+            ctx.beginPath();
+            ctx.moveTo(getX(0), getYTemp(chartData[0]));
+            for (let i = 1; i < chartData.length; i++) {
+                ctx.lineTo(getX(i), getYTemp(chartData[i]));
+            }
+            ctx.strokeStyle = '#ff4757';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Fill area under temp line
+            ctx.lineTo(getX(chartData.length - 1), height - padding);
+            ctx.lineTo(getX(0), height - padding);
+            ctx.closePath();
+            ctx.fillStyle = tempGradient;
+            ctx.fill();
+
+            // Draw Humidity Line (Cyan)
+            ctx.beginPath();
+            ctx.moveTo(getX(0), getYHum(humidityData[0]));
+            for (let i = 1; i < humidityData.length; i++) {
+                ctx.lineTo(getX(i), getYHum(humidityData[i]));
+            }
+            ctx.strokeStyle = '#00f2fe';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([4, 4]);
+            ctx.stroke();
+            ctx.setLineDash([]); // Reset line dash
+
+            // Draw Legend
+            ctx.font = '11px "Fira Code", monospace';
+            ctx.fillStyle = '#ff4757';
+            ctx.fillText('━ Temperature (°C)', padding, 20);
+            ctx.fillStyle = '#00f2fe';
+            ctx.fillText('┈ Humidity (%)', padding + 160, 20);
+        }
+
+        // Live Data Updater Loop
+        function updateSensors() {
+            if (!isPaused) {
+                const newTemp = parseFloat((24 + Math.random() * 5).toFixed(1));
+                const newHum = Math.floor(50 + Math.random() * 20);
+                const newVolt = (3.30 + (Math.random() * 0.05 - 0.025)).toFixed(2);
+                const newRssi = -55 - Math.floor(Math.random() * 6);
+                const newAdc = Math.floor(2100 + Math.random() * 100);
+
+                document.getElementById('temp-val').innerText = newTemp;
+                document.getElementById('humidity-val').innerText = newHum;
+                document.getElementById('voltage-val').innerText = newVolt;
+                document.getElementById('rssi-val').innerText = newRssi;
+                document.getElementById('pin34-adc').innerText = `ADC: ${newAdc} (${(newAdc * 3.3 / 4095).toFixed(2)}V)`;
+
+                chartData.shift();
+                chartData.push(newTemp);
+
+                humidityData.shift();
+                humidityData.push(newHum);
+
+                drawChart();
+
+                // Random log occasionally
+                if (Math.random() > 0.7) {
+                    appendLog('INFO', `Sensor DHT22 read OK: ${newTemp}°C, ${newHum}%`);
+                }
+            }
+        }
+
+        setInterval(updateSensors, 2000);
+        drawChart();
+
+        // Pause Chart Button
+        const pauseBtn = document.getElementById('pause-chart-btn');
+        pauseBtn.addEventListener('click', () => {
+            isPaused = !isPaused;
+            pauseBtn.innerHTML = isPaused ? '<i class="fa-solid fa-play"></i> Resume' : '<i class="fa-solid fa-pause"></i> Pause';
+        });
+
+        // Actuator Logic
+        function toggleRelay(name, status) {
+            const stateStr = status ? 'HIGH' : 'LOW';
+            appendLog('WARN', `GPIO Command: ${name} set to ${stateStr}`);
+            
+            if (name === 'Relay 1') {
+                const pinTd = document.getElementById('pin26-state');
+                if (status) {
+                    pinTd.className = 'pin-state-high';
+                    pinTd.innerHTML = '<i class="fa-solid fa-circle" style="font-size: 8px;"></i> HIGH (3.3V)';
+                } else {
+                    pinTd.className = 'pin-state-low';
+                    pinTd.innerHTML = '<i class="fa-solid fa-circle" style="font-size: 8px;"></i> LOW (0.0V)';
+                }
+            }
+        }
+
+        function updatePWM(val) {
+            document.getElementById('pwm-val').innerText = `${val} / 255`;
+        }
+
+        function updateServo(angle) {
+            document.getElementById('servo-val').innerText = `${angle}°`;
+        }
+
+        // Terminal Log Functions
+        function appendLog(type, text) {
+            const terminal = document.getElementById('terminal-output');
+            const now = new Date();
+            const timeStr = `[${now.toTimeString().split(' ')[0]}]`;
+            
+            let typeClass = 'log-info';
+            if (type === 'SUCCESS') typeClass = 'log-success';
+            if (type === 'WARN') typeClass = 'log-warn';
+            if (type === 'ERROR') typeClass = 'log-error';
+
+            const logRow = document.createElement('div');
+            logRow.className = 'log-entry';
+            logRow.innerHTML = `
+                <span class="log-time">${timeStr}</span>
+                <span class="log-type ${typeClass}">[${type}]</span>
+                <span>${text}</span>
+            `;
+
+            terminal.appendChild(logRow);
+            terminal.scrollTop = terminal.scrollHeight;
+        }
+
+        function clearTerminal() {
+            document.getElementById('terminal-output').innerHTML = '';
+            appendLog('INFO', 'Terminal buffer cleared.');
+        }
+
+        function sendTerminalCmd(e) {
+            e.preventDefault();
+            const input = document.getElementById('cmd-input');
+            const cmd = input.value.trim();
+            if (!cmd) return;
+
+            appendLog('INFO', `> ${cmd}`);
+            input.value = '';
+
+            setTimeout(() => {
+                if (cmd.toLowerCase() === 'status') {
+                    appendLog('SUCCESS', 'Core 0: 240MHz | Core 1: 240MHz | WiFi: Connected | Heap: 184.2KB');
+                } else if (cmd.toLowerCase() === 'reboot') {
+                    appendLog('WARN', 'Rebooting ESP32 MCU...');
+                    setTimeout(() => appendLog('SUCCESS', 'ESP32 system restart completed successfully.'), 1500);
+                } else if (cmd.toLowerCase().startsWith('gpio')) {
+                    appendLog('SUCCESS', `ACK: Executed command '${cmd}'`);
+                } else {
+                    appendLog('ERROR', `Unknown command: '${cmd}'. Available: status, reboot, gpio`);
+                }
+            }, 300);
+        }
+
+        // Live Uptime Timer
+        let seconds = 390918;
+        setInterval(() => {
+            seconds++;
+            const d = Math.floor(seconds / (3600*24));
+            const h = Math.floor((seconds % (3600*24)) / 3600);
+            const m = Math.floor((seconds % 3600) / 60);
+            const s = Math.floor(seconds % 60);
+            document.getElementById('uptime-counter').innerText = 
+                `${String(d).padStart(2,'0')}d ${String(h).padStart(2,'0')}h ${String(m).padStart(2,'0')}m ${String(s).padStart(2,'0')}s`;
+        }, 1000);
+    </script>
+</body>
+</html>
